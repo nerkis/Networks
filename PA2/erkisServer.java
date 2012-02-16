@@ -14,7 +14,7 @@ public final class WebServer
 		int port = 5020;
 
 		// establish the listen socket
-		Socket listenSocket = new Socket("hostname", 5020);
+		ServerSocket listenSocket = new ServerSocket(5020);	
 
 		// process HTTP service requests in an infinite loop
 		while (true) {
@@ -58,14 +58,14 @@ final class HttpRequest implements Runnable
 	{
 		// get a reference to the socket's input and output streams
 		InputStream is = socket.getInputStream();
-		DataOutputStream os = socket.getOutputStream();
+		OutputStream os = socket.getOutputStream();
 
 		// set up input stream filters
 		InputStreamReader inReader = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(inReader);
+		BufferedReader bufferInput = new BufferedReader(inReader);
 
 		// get the request line of the HTTP request message
-		String requestLine = br.readLine();
+		String requestLine = bufferInput.readLine();
 
 		// display the request line
 		System.out.println();
@@ -73,14 +73,14 @@ final class HttpRequest implements Runnable
 
 		// get and display the header lines
 		String headerLine = null;
-		while ((headerLine = br.readLine()).length() != 0) 
+		while ((headerLine = bufferInput.readLine()).length() != 0) 
 		{
 			System.out.println(headerLine);
 		}
 
 		//close streams and socket
 		os.close();
-		br.close();
+		bufferInput.close();
 		socket.close();
 	}
 }
