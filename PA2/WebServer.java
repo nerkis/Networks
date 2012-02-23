@@ -66,7 +66,7 @@ final class HttpRequest implements Runnable
 		int bytes = 0;
 
 		//copy requested file into the socket's output stream
-		while((bytes == fis.read(buffer)) != -1)
+		while((bytes = fis.read(buffer)) != -1)
 		{
 			os.write(buffer, 0, bytes);
 		}
@@ -78,13 +78,13 @@ final class HttpRequest implements Runnable
 		{
 			return "text/html";
 		}
-		if (?)
+		if (fileName.endsWith(".gif"))
 		{
-			?;
+			return "image/gif";
 		}
-		if (?)
+		if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg"))
 		{
-			?;
+			return "image/jpeg";
 		}
 		return "application/octet-stream";
 	}
@@ -93,14 +93,14 @@ final class HttpRequest implements Runnable
 	{
 		//get a reference to the socket's input and output streams
 		InputStream is = socket.getInputStream();
-		OutputStream os = socket.getOutputStream();
+		DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 
 		//set up input stream filters
 		InputStreamReader inReader = new InputStreamReader(is);
 		BufferedReader bufferInput = new BufferedReader(inReader);
 
 		//get the request line of the HTTP request message
-		String requestLine = bufferInput.readLine();
+		String requestLine = bufferInput.readLine(); 
 
 		//display the request line
 		System.out.println();
@@ -136,14 +136,14 @@ final class HttpRequest implements Runnable
 		String entityBody = null;
 		if (fileExists)
 		{
-			statusLine = ?;
+			statusLine = "200 OK" + CRLF;
 			contentTypeLine = "Content-type: " +
 				contentType(fileName) + CRLF;
 		}
 		else 
 		{
-			statusLine = ?'
-			contentTypeLine = ?;
+			statusLine = "404 Not Found" + CRLF;
+			contentTypeLine = "Content not found" + CRLF;
 			entityBody = "<HTML>" +
 				"<HEAD><TITLE>Not Found</TITLE></HEAD>" +
 				"<BODY>Not Found</BODY></HTML>";
@@ -153,7 +153,7 @@ final class HttpRequest implements Runnable
 		os.writeBytes(statusLine);
 
 		//send the content type
-		os.writeBytes(?);
+		os.writeBytes(contentTypeLine);
 
 		//send a blank line to indicate the end of the header lines
 		os.writeBytes(CRLF);
@@ -165,7 +165,7 @@ final class HttpRequest implements Runnable
 			fis.close();
 		}
 		else {
-			os.writeBytes(?);
+			os.writeBytes(entityBody); //"Content not found"
 		}
 
 		//close streams and socket
