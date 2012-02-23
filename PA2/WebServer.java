@@ -100,7 +100,7 @@ final class HttpRequest implements Runnable
 		BufferedReader bufferInput = new BufferedReader(inReader);
 
 		//get the request line of the HTTP request message
-		String requestLine = bufferInput.readLine(); 
+		String requestLine = new String(bufferInput.readLine()); 
 
 		//display the request line
 		System.out.println();
@@ -165,7 +165,7 @@ final class HttpRequest implements Runnable
 			fis.close();
 		}
 		else {
-			os.writeBytes(entityBody); //"Content not found"
+			os.writeBytes(entityBody);
 		}
 
 		//close streams and socket
